@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -33,21 +35,27 @@ public class MainActivity extends ActionBarActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+        Button b = (Button) findViewById(R.id.button);
+        b.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess() {
-                Log.d(DEBUG_TAG, "Success DISCOVER");
-            }
+            public void onClick(View v) {
+                mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d(DEBUG_TAG, "Success DISCOVER");
+                    }
 
-            @Override
-            public void onFailure(int reasonCode) {
-                Log.d(DEBUG_TAG, "Fail DISCOVER");
+                    @Override
+                    public void onFailure(int reasonCode) {
+                        Log.d(DEBUG_TAG, "Fail DISCOVER");
+                    }
+                });
             }
         });
     }
 
     @Override
-         protected void onResume() {
+    protected void onResume() {
         super.onResume();
         registerReceiver(mReceiver, mIntentFilter);
     }

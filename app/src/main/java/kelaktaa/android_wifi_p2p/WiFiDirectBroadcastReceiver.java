@@ -38,18 +38,34 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
         Log.d(DEBUG_TAG, "============ "+action);
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            Log.d(DEBUG_TAG, "WIFI_P2P_STATE_CHANGED_ACTION");
+            //Log.d(DEBUG_TAG, "WIFI_P2P_STATE_CHANGED_ACTION");
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             Log.d(DEBUG_TAG, "+++++++++++ WIFI_P2P_PEERS_CHANGED_ACTION");
             if(mManager != null) {
                 mManager.requestPeers(mChannel, myPeerListListener);
-                myPeerListListener.onPeersAvailable(list);
+                if(myPeerListListener != null) {
+                    Log.d(DEBUG_TAG, "myPeerListListener NOT NULL ");
+                    myPeerListListener.onPeersAvailable(list);
+                    if(list != null) {
+                        Log.d(DEBUG_TAG, "list NOT NULL "+list.toString());
+                    }
+                    else {
+                        Log.d(DEBUG_TAG, "list NULL");
+                    }
+                }
+                else {
+                    Log.d(DEBUG_TAG, "myPeerListListener NULL");
+                }
+                //myPeerListListener.onPeersAvailable(list);
                 //Log.d(DEBUG_TAG, "LISTE => "+ list.toString() + list.getDeviceList().size());
             }
+            else {
+                Log.d(DEBUG_TAG, "MANAGER NULL");
+            }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-            Log.d(DEBUG_TAG, "WIFI_P2P_CONNECTION_CHANGED_ACTION");
+            //Log.d(DEBUG_TAG, "WIFI_P2P_CONNECTION_CHANGED_ACTION");
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            Log.d(DEBUG_TAG, "WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
+            //Log.d(DEBUG_TAG, "WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
         }
     }
 }
