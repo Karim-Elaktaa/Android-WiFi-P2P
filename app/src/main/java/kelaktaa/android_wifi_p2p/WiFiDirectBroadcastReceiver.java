@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -24,6 +25,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
     private MainActivity mActivity;
     final private static String DEBUG_TAG = "WiFiDirectBroadcastReceiver";
     private PeerListListener myPeerListListener;
+    private WifiP2pManager.GroupInfoListener groupInfoListener;
     private WifiP2pDeviceList list;
     WifiP2pConfig config = new WifiP2pConfig();
     private boolean connected = false;
@@ -36,6 +38,16 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
         this.mManager = manager;
         this.mChannel = channel;
         this.mActivity = activity;
+
+        groupInfoListener = new WifiP2pManager.GroupInfoListener() {
+            @Override
+            public void onGroupInfoAvailable(WifiP2pGroup group) {
+                //Log.d("getNetworkName", group.getNetworkName());
+                //Log.d("getOwner().deviceAddress", group.getOwner().deviceAddress);
+                //Log.d("getOwner().deviceName", group.getOwner().deviceName);
+
+            }
+        };
 
         myPeerListListener = new PeerListListener() {
             @Override
@@ -88,8 +100,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             //Log.d(DEBUG_TAG, "WIFI_P2P_CONNECTION_CHANGED_ACTION");
             //get ip address of GO
-            
-
+            if(mManager != null) {
+                mManager.requestGroupInfo(mChannel, groupInfoListener);
+            }
+            else {
+                Log.d(DEBUG_TAG, "MANAGER NULL");
+            }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             //Log.d(DEBUG_TAG, "WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
         }

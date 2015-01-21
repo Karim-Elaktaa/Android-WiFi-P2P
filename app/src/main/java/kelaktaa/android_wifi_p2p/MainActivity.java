@@ -27,7 +27,7 @@ public class MainActivity extends ActionBarActivity {
     private BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
     final private static String DEBUG_TAG = "MainActivity";
-    Context context = this.getApplicationContext();
+    Context context;
     String host;
     int port = 8888;
     int len;
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
-
+        context = this.getApplicationContext();
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);

@@ -10,10 +10,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -56,12 +58,23 @@ public class FileServerAsyncTask extends AsyncTask {
 
     public void launchServer () {
         try {
+            Log.d("SERVER ON", "SERVER ON");
+
             ServerSocket serverSocket = new ServerSocket(8888);
             Socket client = serverSocket.accept();
 
             InputStream inputStream = client.getInputStream();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+            String inputLine;
+            inputLine = in.readLine();
+            in.close();
+
             res = inputStream.toString();
-            Toast.makeText(context, inputStream.toString(), Toast.LENGTH_LONG);
+            Log.d("SERVER ON", res);
+            Log.d("SERVER ON", inputLine);
+            res = inputLine;
+
             serverSocket.close();
         }
         catch(IOException e) {
@@ -70,7 +83,7 @@ public class FileServerAsyncTask extends AsyncTask {
     }
 
     public void resServer () {
-            statusText.setText("RESULT - "+ res);
+            statusText.setText("RESULT - " + res);
     }
 
     public void launchClient () {
