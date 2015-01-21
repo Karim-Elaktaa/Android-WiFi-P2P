@@ -3,12 +3,16 @@ package kelaktaa.android_wifi_p2p;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.util.Log;
+
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,6 +25,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
     final private static String DEBUG_TAG = "WiFiDirectBroadcastReceiver";
     private PeerListListener myPeerListListener;
     private WifiP2pDeviceList list;
+    WifiP2pDevice device;
+    WifiP2pConfig config = new WifiP2pConfig();
 
     public WiFiDirectBroadcastReceiver() {
         super();
@@ -30,6 +36,23 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
         this.mManager = manager;
         this.mChannel = channel;
         this.mActivity = activity;
+
+        myPeerListListener = new PeerListListener() {
+            @Override
+            public void onPeersAvailable(WifiP2pDeviceList peers) {
+                Collection<WifiP2pDevice> deviceList = peers.getDeviceList();
+                Log.d(DEBUG_TAG, "PeerListListener "+ deviceList.size());
+                Iterator<WifiP2pDevice> iterator = deviceList.iterator();
+                while(iterator.hasNext()) {
+                    WifiP2pDevice current = iterator.next();
+                    Log.d("DEVICE deviceAddress", current.deviceAddress);
+                    Log.d("DEVICE deviceName", current.deviceName);
+                    Log.d("DEVICE primaryDeviceType", current.primaryDeviceType);
+
+                    
+                }
+            }
+        };
     }
 
     @Override
@@ -43,21 +66,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
             Log.d(DEBUG_TAG, "+++++++++++ WIFI_P2P_PEERS_CHANGED_ACTION");
             if(mManager != null) {
                 mManager.requestPeers(mChannel, myPeerListListener);
-                if(myPeerListListener != null) {
-                    Log.d(DEBUG_TAG, "myPeerListListener NOT NULL ");
-                    myPeerListListener.onPeersAvailable(list);
-                    if(list != null) {
-                        Log.d(DEBUG_TAG, "list NOT NULL "+list.toString());
-                    }
-                    else {
-                        Log.d(DEBUG_TAG, "list NULL");
-                    }
-                }
-                else {
-                    Log.d(DEBUG_TAG, "myPeerListListener NULL");
-                }
-                //myPeerListListener.onPeersAvailable(list);
-                //Log.d(DEBUG_TAG, "LISTE => "+ list.toString() + list.getDeviceList().size());
             }
             else {
                 Log.d(DEBUG_TAG, "MANAGER NULL");
