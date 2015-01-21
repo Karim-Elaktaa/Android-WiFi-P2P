@@ -87,6 +87,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             //Log.d(DEBUG_TAG, "WIFI_P2P_CONNECTION_CHANGED_ACTION");
+            //get ip address of GO
+            
+
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             //Log.d(DEBUG_TAG, "WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
         }

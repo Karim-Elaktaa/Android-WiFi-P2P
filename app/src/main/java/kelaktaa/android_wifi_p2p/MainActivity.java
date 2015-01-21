@@ -1,6 +1,7 @@
 package kelaktaa.android_wifi_p2p;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -13,6 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 
 public class MainActivity extends ActionBarActivity {
     private WifiP2pManager mManager;
@@ -20,6 +27,12 @@ public class MainActivity extends ActionBarActivity {
     private BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
     final private static String DEBUG_TAG = "MainActivity";
+    Context context = this.getApplicationContext();
+    String host;
+    int port = 8888;
+    int len;
+    Socket socket = new Socket();
+    byte buf[] = new byte[1024];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +70,43 @@ public class MainActivity extends ActionBarActivity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    socket.bind(null);
+                    socket.connect((new InetSocketAddress(host, port)), 500);
 
+                    OutputStream outputStream = socket.getOutputStream();
+                    //ContentResolver cr = context.getContentResolver();
+                    //InputStream inputStream = null;
+                    String msg = "looooololo";
+                    outputStream.write(msg.getBytes());
+                    outputStream.close();
+                }
+                catch (IOException e) {
+                    Log.e("Main Client", e.getMessage());
+                }
+
+                finally {
+                    if (socket != null) {
+                        if (socket.isConnected()) {
+                            try {
+                                socket.close();
+                            }
+                            catch (IOException e) {
+                                Log.e("Main Client", e.getMessage());
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+
+        b = (Button) findViewById(R.id.button3);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileServerAsyncTask task = new FileServerAsyncTask(getApplicationContext(), findViewById(R.id.textView), true);
+                task.execute();
             }
         });
     }
