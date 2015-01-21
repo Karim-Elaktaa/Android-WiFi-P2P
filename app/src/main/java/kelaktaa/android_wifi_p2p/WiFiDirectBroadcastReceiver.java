@@ -25,7 +25,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
     final private static String DEBUG_TAG = "WiFiDirectBroadcastReceiver";
     private PeerListListener myPeerListListener;
     private WifiP2pDeviceList list;
-    WifiP2pDevice device;
     WifiP2pConfig config = new WifiP2pConfig();
 
     public WiFiDirectBroadcastReceiver() {
@@ -49,7 +48,19 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
                     Log.d("DEVICE deviceName", current.deviceName);
                     Log.d("DEVICE primaryDeviceType", current.primaryDeviceType);
 
-                    
+                    //connect
+                    config.deviceAddress = current.deviceAddress;
+                    mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            Log.d("CONNECT", "SUCCESS");
+                        }
+
+                        @Override
+                        public void onFailure(int reason) {
+                            Log.d("CONNECT", "FAIL");
+                        }
+                    });
                 }
             }
         };
