@@ -7,6 +7,7 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -26,6 +27,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
     final private static String DEBUG_TAG = "WiFiDirectBroadcastReceiver";
     private PeerListListener myPeerListListener;
     private WifiP2pManager.GroupInfoListener groupInfoListener;
+    private WifiP2pManager.ConnectionInfoListener connectionInfoListener;
     private WifiP2pDeviceList list;
     WifiP2pConfig config = new WifiP2pConfig();
     private boolean connected = false;
@@ -42,10 +44,24 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
         groupInfoListener = new WifiP2pManager.GroupInfoListener() {
             @Override
             public void onGroupInfoAvailable(WifiP2pGroup group) {
-                //Log.d("getNetworkName", group.getNetworkName());
-                //Log.d("getOwner().deviceAddress", group.getOwner().deviceAddress);
-                //Log.d("getOwner().deviceName", group.getOwner().deviceName);
+                if(group != null) {
+                    Log.d("getNetworkName", group.getNetworkName());
+                    Log.d("getOwner().deviceAddress", group.getOwner().deviceAddress);
+                    Log.d("getOwner().deviceName", group.getOwner().deviceName);
+                }
+            }
+        };
 
+        connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+            @Override
+            public void onConnectionInfoAvailable(WifiP2pInfo info) {
+                if(info != null && info.groupOwnerAddress != null) {
+                    /*
+                    Log.d("groupOwnerAddress.toString", info.groupOwnerAddress.toString());
+                    Log.d("groupOwnerAddress.getHostAddress", info.groupOwnerAddress.getHostAddress());
+                    Log.d("groupOwnerAddress.getHostName", info.groupOwnerAddress.getHostName());
+                    Log.d("groupOwnerAddress.getCanonicalHostName", info.groupOwnerAddress.getCanonicalHostName());*/
+                }
             }
         };
 
@@ -102,6 +118,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
             //get ip address of GO
             if(mManager != null) {
                 mManager.requestGroupInfo(mChannel, groupInfoListener);
+                mManager.requestConnectionInfo(mChannel, connectionInfoListener);
             }
             else {
                 Log.d(DEBUG_TAG, "MANAGER NULL");

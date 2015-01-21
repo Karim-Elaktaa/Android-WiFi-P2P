@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.support.v7.app.ActionBarActivity;
@@ -13,12 +14,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Iterator;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -70,29 +74,34 @@ public class MainActivity extends ActionBarActivity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    socket.bind(null);
-                    socket.connect((new InetSocketAddress(host, port)), 500);
 
-                    OutputStream outputStream = socket.getOutputStream();
-                    //ContentResolver cr = context.getContentResolver();
-                    //InputStream inputStream = null;
-                    String msg = "looooololo";
-                    outputStream.write(msg.getBytes());
-                    outputStream.close();
-                }
-                catch (IOException e) {
-                    Log.e("Main Client", e.getMessage());
-                }
+                Iterator<InetAddress> iterator = FileServerAsyncTask.mListUserIp.iterator();
+                while(iterator.hasNext()) {
+                    InetAddress currentAddr = iterator.next();
+                    host = currentAddr.toString();
+                    try {
+                        socket.bind(null);
+                        socket.connect((new InetSocketAddress(host, port)), 500);
 
-                finally {
-                    if (socket != null) {
-                        if (socket.isConnected()) {
-                            try {
-                                socket.close();
-                            }
-                            catch (IOException e) {
-                                Log.e("Main Client", e.getMessage());
+                        OutputStream outputStream = socket.getOutputStream();
+                        //ContentResolver cr = context.getContentResolver();
+                        //InputStream inputStream = null;
+                        String msg = "looooololo";
+                        EditText editText = (EditText) findViewById(R.id.editText);
+                        if (editText != null)
+                            msg = editText.getText().toString();
+                        outputStream.write(msg.getBytes());
+                        outputStream.close();
+                    } catch (IOException e) {
+                        Log.e("Main Client", e.getMessage());
+                    } finally {
+                        if (socket != null) {
+                            if (socket.isConnected()) {
+                                try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                    Log.e("Main Client", e.getMessage());
+                                }
                             }
                         }
                     }
@@ -109,7 +118,8 @@ public class MainActivity extends ActionBarActivity {
                 task.execute();
             }
         });
-    }
+
+     }
 
     @Override
     protected void onResume() {

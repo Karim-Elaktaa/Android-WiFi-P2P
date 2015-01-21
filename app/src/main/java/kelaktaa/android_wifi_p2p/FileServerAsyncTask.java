@@ -16,8 +16,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Karim on 21/01/2015.
@@ -27,11 +32,13 @@ public class FileServerAsyncTask extends AsyncTask {
     private TextView statusText;
     private String res = "wtf";
     private boolean isServer = false;
+    public static Collection<InetAddress> mListUserIp;
 
     public FileServerAsyncTask(Context context, View statusText, boolean isServer) {
         this.context = context;
         this.statusText = (TextView) statusText;
         this.isServer = isServer;
+        FileServerAsyncTask.mListUserIp = new ArrayList<InetAddress>();
     }
 
     @Override
@@ -62,6 +69,7 @@ public class FileServerAsyncTask extends AsyncTask {
 
             ServerSocket serverSocket = new ServerSocket(8888);
             Socket client = serverSocket.accept();
+            FileServerAsyncTask.mListUserIp.add(client.getInetAddress());
 
             InputStream inputStream = client.getInputStream();
 
